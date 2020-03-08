@@ -1,0 +1,8 @@
+# this is mysql config
+[list]
+    [list.default]
+        driver_name = "mysql"
+        data_source_name = "users:RNjbjrmKRM7AyynF@tcp(127.0.0.1:3306)/users?charset=utf8&parseTime=true&loc=Asia%2FShanghai"
+        max_open_conn = 20
+        max_idle_conn = 10
+        max_conn_life_time = 100
