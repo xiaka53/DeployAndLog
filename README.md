@@ -1,6 +1,6 @@
 # DeployAndLog
 
-###定位
+### 定位
 
 配置 Golang 基础服务（mysql、redis、http.client、log）比较繁琐，如果想 快速接入 基础服务可以使用本类库。 没有多余复杂的功能，方便你拓展其他功能。 你可以 import 引入直接使用，也可以拷贝代码到自己项目中使用，也可以用于构建自己的基础类库。
 
@@ -11,7 +11,7 @@ mysql、redis 多套数据源配置。
 支持 mysql(基于gorm的二次开发支持ctx功能，不影响gorm原功能使用)、redis(redigo)、http.client 请求链路日志输出。
 
 
-###log消息打印代码举例：
+### log消息打印代码举例：
 ```go
 package main
 
