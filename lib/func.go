@@ -2,11 +2,11 @@ package lib
 
 import (
 	"bytes"
-	log2 "github.com/xiaka53/DeployAndLog/log"
 	"encoding/binary"
 	"encoding/hex"
 	"flag"
 	"fmt"
+	log2 "github.com/xiaka53/DeployAndLog/log"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -79,7 +79,7 @@ func InitModule(configPath string, modules []string) (err error) {
 
 	// 加载redis配置
 	if InArrayString("redis", modules) {
-		if nilerr = InitRedisConf(GetConfPath("redis_map")); nilerr != nil {
+		if nilerr = InitRedisPool(GetConfPath("redis_map")); nilerr != nil {
 			fmt.Printf("[ERROR] %s%s\n", time.Now().Format(TimeFormat), " InitRedisConf:"+nilerr.Error())
 		}
 	}

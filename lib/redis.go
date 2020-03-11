@@ -4,34 +4,80 @@ import (
 	"errors"
 	"fmt"
 	"github.com/garyburd/redigo/redis"
-	"math/rand"
 	"time"
 )
 
-func RedisConnFactory(name string) (redis.Conn, error) {
+//生成链接池
+func InitRedisPool(path string) error {
+	RedisConfMap := &RedisMapConf{}
+	err := ParseConfig(path, RedisConfMap)
+	if err != nil {
+		return err
+	}
+	ConfRedisMap = RedisConfMap
+	if len(ConfRedisMap.List) == 0 {
+		fmt.Printf("[INFO] %s%s\n", time.Now().Format(TimeFormat), " empty redis config.")
+	}
+
+	RedisMapPool = map[string]*redis.Pool{}
+
 	if ConfRedisMap != nil && ConfRedisMap.List != nil {
 		for confName, cfg := range ConfRedisMap.List {
-			if name == confName {
-				randHost := cfg.ProxyList[rand.Intn(len(cfg.ProxyList))]
-				if cfg.ConnTimeout == 0 {
-					cfg.ConnTimeout = 50
-				}
-				if cfg.ReadTimeout == 0 {
-					cfg.ReadTimeout = 100
-				}
-				if cfg.WriteTimeout == 0 {
-					cfg.WriteTimeout = 100
-				}
-				return redis.Dial(
-					"tcp",
-					randHost,
-					redis.DialConnectTimeout(time.Duration(cfg.ConnTimeout)*time.Millisecond),
-					redis.DialReadTimeout(time.Duration(cfg.ReadTimeout)*time.Millisecond),
-					redis.DialWriteTimeout(time.Duration(cfg.WriteTimeout)*time.Millisecond))
+			if cfg.ConnTimeout == 0 {
+				cfg.ConnTimeout = 50
 			}
+			if cfg.ReadTimeout == 0 {
+				cfg.ReadTimeout = 100
+			}
+			if cfg.WriteTimeout == 0 {
+				cfg.WriteTimeout = 100
+			}
+			redispool := &redis.Pool{
+				MaxIdle:     cfg.MaxIdle,
+				MaxActive:   cfg.MaxActive,
+				IdleTimeout: 240 * time.Second,
+				Wait:        true,
+				Dial: func() (redis.Conn, error) {
+					c, err := redis.Dial(
+						"tcp",
+						cfg.ProxyList[0],
+						redis.DialPassword(cfg.ProxyList[1]),
+						redis.DialConnectTimeout(time.Duration(cfg.ConnTimeout)*time.Millisecond),
+						redis.DialReadTimeout(time.Duration(cfg.ReadTimeout)*time.Millisecond),
+						redis.DialWriteTimeout(time.Duration(cfg.WriteTimeout)*time.Millisecond))
+					if err != nil {
+						return nil, err
+					}
+					return c, nil
+				},
+			}
+			RedisMapPool[confName] = redispool
+		}
+		if defaultpool, err := GetRedisPool("default"); err == nil {
+			RedisDefaultPool = defaultpool
 		}
 	}
-	return nil, errors.New("create redis conn fail")
+	return nil
+}
+
+//获取链接池
+func GetRedisPool(name string) (*redis.Pool, error) {
+	if redispool, ok := RedisMapPool[name]; ok {
+		return redispool, nil
+	}
+	return nil, errors.New("get pool error")
+}
+
+//从连接池里获取一个连接
+func RedisConnFactory(name string) (redis.Conn, error) {
+	var (
+		pool *redis.Pool
+		err  error
+	)
+	if pool, err = GetRedisPool(name); err != nil {
+		return nil, err
+	}
+	return pool.Get(), nil
 }
 
 func RedisLogDo(trace *TraceContext, c redis.Conn, commandName string, args ...interface{}) (interface{}, error) {

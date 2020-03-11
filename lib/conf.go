@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/e421083458/gorm"
 	_ "github.com/e421083458/gorm/dialects/mysql"
+	"github.com/garyburd/redigo/redis"
 	"github.com/spf13/viper"
 	"github.com/xiaka53/DeployAndLog/log"
 	"io/ioutil"
@@ -60,20 +61,24 @@ type RedisMapConf struct {
 
 type RedisConf struct {
 	ProxyList    []string `mapstructure:"proxy_list"`
+	MaxIdle      int      `mapstructure:"max_idle"`
+	MaxActive    int      `mapstructure:"max_active"`
 	ConnTimeout  int      `mapstructure:"conn_timeout"`
 	ReadTimeout  int      `mapstructure:"read_timeout"`
 	WriteTimeout int      `mapstructure:"write_timeout"`
 }
 
 var (
-	ConfBase        *BaseConf
-	DBMapPool       map[string]*sql.DB
-	GORMMapPool     map[string]*gorm.DB
-	DBDefaultPool   *sql.DB
-	GORMDefaultPool *gorm.DB
-	ConfRedis       *RedisConf
-	ConfRedisMap    *RedisMapConf
-	ViperConfMap    map[string]*viper.Viper
+	ConfBase         *BaseConf
+	DBMapPool        map[string]*sql.DB
+	GORMMapPool      map[string]*gorm.DB
+	DBDefaultPool    *sql.DB
+	GORMDefaultPool  *gorm.DB
+	ConfRedis        *RedisConf
+	ConfRedisMap     *RedisMapConf
+	RedisMapPool     map[string]*redis.Pool
+	RedisDefaultPool *redis.Pool
+	ViperConfMap     map[string]*viper.Viper
 )
 
 //初始化base配置
@@ -127,15 +132,16 @@ func InitBaseConf(path string) (err error) {
 	return
 }
 
-func InitRedisConf(path string) error {
-	ConfRedis := &RedisMapConf{}
-	err := ParseConfig(path, ConfRedis)
-	if err != nil {
-		return err
-	}
-	ConfRedisMap = ConfRedis
-	return nil
-}
+//TODO 旧的获取redis
+//func InitRedisConf(path string) error {
+//	ConfRedis := &RedisMapConf{}
+//	err := ParseConfig(path, ConfRedis)
+//	if err != nil {
+//		return err
+//	}
+//	ConfRedisMap = ConfRedis
+//	return nil
+//}
 
 //初始化配置文件
 func InitViperConf() (err error) {
