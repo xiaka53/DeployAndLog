@@ -80,6 +80,19 @@ func RedisConnFactory(name string) (redis.Conn, error) {
 	return pool.Get(), nil
 }
 
+//关闭一个链接
+func RedisConnClose(trace *TraceContext, conn redis.Conn) {
+	startExecTime := time.Now()
+	if err := conn.Close(); err != nil {
+		endExecTime := time.Now()
+		Log.TagError(trace, "_com_redis_failure", map[string]interface{}{
+			"err":       errors.New("RedisConnCloseError"),
+			"proc_time": fmt.Sprintf("%fs", endExecTime.Sub(startExecTime).Seconds()),
+		})
+	}
+	return
+}
+
 func RedisLogDo(trace *TraceContext, c redis.Conn, commandName string, args ...interface{}) (interface{}, error) {
 	startExecTime := time.Now()
 	reply, err := c.Do(commandName, args...)
@@ -114,7 +127,7 @@ func RedisConfDo(trace *TraceContext, name string, commandName string, args ...i
 		})
 		return nil, err
 	}
-	defer c.Close()
+	defer RedisConnClose(trace, c)
 
 	startExecTime := time.Now()
 	reply, err := c.Do(commandName, args...)
