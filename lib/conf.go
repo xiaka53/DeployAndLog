@@ -104,6 +104,7 @@ func InitBaseConf(path string) (err error) {
 		} else {
 			ConfBase.TimeLocation = "Asia/Shanghai"
 		}
+		log.SetLoadLocation(ConfBase.TimeLocation)
 	}
 	if ConfBase.Log.Level == "" {
 		ConfBase.Log.Level = "trace"

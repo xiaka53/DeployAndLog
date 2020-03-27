@@ -51,14 +51,15 @@ type Flusher interface {
 }
 
 type Logger struct {
-	writers     []Writer
-	tunnel      chan *Record
-	level       int
-	lastTime    int64
-	lastTimeStr string
-	c           chan bool
-	layout      string
-	recordPool  *sync.Pool
+	writers      []Writer
+	tunnel       chan *Record
+	level        int
+	lastTime     int64
+	lastTimeStr  string
+	c            chan bool
+	layout       string
+	recordPool   *sync.Pool
+	loadLocation *time.Location
 }
 
 func NewLogger() *Logger {
@@ -75,6 +76,7 @@ func NewLogger() *Logger {
 	l.recordPool = &sync.Pool{New: func() interface{} {
 		return &Record{}
 	}}
+	l.loadLocation, _ = time.LoadLocation("Asia/Shanghai")
 	go boostrapLogWriter(l)
 
 	return l
@@ -154,7 +156,8 @@ func (l *Logger) deliverRecordToWriter(level int, format string, args ...interfa
 	now := time.Now()
 	if now.Unix() != l.lastTime {
 		l.lastTime = now.Unix()
-		l.lastTimeStr = now.Format(l.layout)
+		l.lastTimeStr = now.In(l.loadLocation).String()
+
 	}
 	r := l.recordPool.Get().(*Record)
 	r.info = inf
@@ -241,6 +244,11 @@ func SetLevel(lvl int) {
 func SetLayout(layout string) {
 	defaultLoggerInit()
 	logger_default.layout = layout
+}
+
+func SetLoadLocation(loadLocation string) {
+	defaultLoggerInit()
+	logger_default.loadLocation, _ = time.LoadLocation(loadLocation)
 }
 
 func Trace(fmt string, args ...interface{}) {
