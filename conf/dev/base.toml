@@ -3,6 +3,7 @@
 [base]
     debug_model="debug"
     time_location="Asia/Shanghai"
+    web_url="google.com"
 
 [log]
     log_level="trace" #日志级别：低
