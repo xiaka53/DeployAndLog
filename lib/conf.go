@@ -19,6 +19,7 @@ type BaseConf struct {
 	TimeLocation string    `mapstructure:"time_location"`
 	Log          LogConfig `mapstructure:"log"`
 	WebUrl       string    `mapstructure:"web_url"`
+	WebName      string    `mapstructure:"web_name"`
 	Base         struct {
 		DebugMode    string `mapstructure:"debug_mode"`
 		TimeLocation string `mapstructure:"time_location"`
