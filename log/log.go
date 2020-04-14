@@ -153,10 +153,10 @@ func (l *Logger) deliverRecordToWriter(level int, format string, args ...interfa
 	}
 
 	// format time
-	now := time.Now().UTC()
+	now := time.Now()
 	if now.Unix() != l.lastTime {
 		l.lastTime = now.Unix()
-		l.lastTimeStr = now.In(l.loadLocation).String()
+		l.lastTimeStr = now.In(l.loadLocation).UTC().String()
 
 	}
 	r := l.recordPool.Get().(*Record)
