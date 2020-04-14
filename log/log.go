@@ -153,7 +153,7 @@ func (l *Logger) deliverRecordToWriter(level int, format string, args ...interfa
 	}
 
 	// format time
-	now := time.Now()
+	now := time.Now().UTC()
 	if now.Unix() != l.lastTime {
 		l.lastTime = now.Unix()
 		l.lastTimeStr = now.In(l.loadLocation).String()
