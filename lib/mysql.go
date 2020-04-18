@@ -137,6 +137,8 @@ func (logger *MysqlGormLogger) CtxPrint(s *gorm.DB, values ...interface{}) {
 	trace := NewTrace()
 	if ok {
 		trace = ctx.(*TraceContext)
+	} else {
+		return
 	}
 	message := logger.LogFormatter(values...)
 	if message["level"] == "sql" {
