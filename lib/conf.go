@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"github.com/e421083458/gorm"
 	_ "github.com/e421083458/gorm/dialects/mysql"
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/viper"
 	"github.com/xiaka53/DeployAndLog/log"
 	"io/ioutil"
@@ -83,7 +83,7 @@ var (
 	ViperConfMap     map[string]*viper.Viper
 )
 
-//初始化base配置
+// 初始化base配置
 func InitBaseConf(path string) (err error) {
 	var (
 		logConf log.LogConfig
@@ -146,7 +146,7 @@ func InitBaseConf(path string) (err error) {
 //	return nil
 //}
 
-//初始化配置文件
+// 初始化配置文件
 func InitViperConf() (err error) {
 	var (
 		f        *os.File
@@ -183,7 +183,7 @@ func InitViperConf() (err error) {
 	return
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetStringConf(key string) string {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -197,7 +197,7 @@ func GetStringConf(key string) string {
 	return confString
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetStringMapConf(key string) map[string]interface{} {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -208,7 +208,7 @@ func GetStringMapConf(key string) map[string]interface{} {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetConf(key string) interface{} {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -219,7 +219,7 @@ func GetConf(key string) interface{} {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetBoolConf(key string) bool {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -230,7 +230,7 @@ func GetBoolConf(key string) bool {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetFloat64Conf(key string) float64 {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -241,7 +241,7 @@ func GetFloat64Conf(key string) float64 {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetIntConf(key string) int {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -252,7 +252,7 @@ func GetIntConf(key string) int {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetStringMapStringConf(key string) map[string]string {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -263,7 +263,7 @@ func GetStringMapStringConf(key string) map[string]string {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetStringSliceConf(key string) []string {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -274,7 +274,7 @@ func GetStringSliceConf(key string) []string {
 	return conf
 }
 
-//获取get配置信息
+// 获取get配置信息
 func GetTimeConf(key string) time.Time {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -285,7 +285,7 @@ func GetTimeConf(key string) time.Time {
 	return conf
 }
 
-//获取时间阶段长度
+// 获取时间阶段长度
 func GetDurationConf(key string) time.Duration {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {
@@ -296,7 +296,7 @@ func GetDurationConf(key string) time.Duration {
 	return conf
 }
 
-//是否设置了key
+// 是否设置了key
 func IsSetConf(key string) bool {
 	keys := strings.Split(key, ".")
 	if len(keys) < 2 {

@@ -3,11 +3,11 @@ package lib
 import (
 	"errors"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"time"
 )
 
-//生成链接池
+// 生成链接池
 func InitRedisPool(path string) error {
 	RedisConfMap := &RedisMapConf{}
 	err := ParseConfig(path, RedisConfMap)
@@ -60,7 +60,7 @@ func InitRedisPool(path string) error {
 	return nil
 }
 
-//获取链接池
+// 获取链接池
 func GetRedisPool(name string) (*redis.Pool, error) {
 	if redispool, ok := RedisMapPool[name]; ok {
 		return redispool, nil
@@ -68,7 +68,7 @@ func GetRedisPool(name string) (*redis.Pool, error) {
 	return nil, errors.New("get pool error")
 }
 
-//从连接池里获取一个连接
+// 从连接池里获取一个连接
 func RedisConnFactory(name string) (redis.Conn, error) {
 	var (
 		pool *redis.Pool
@@ -80,7 +80,7 @@ func RedisConnFactory(name string) (redis.Conn, error) {
 	return pool.Get(), nil
 }
 
-//关闭一个链接
+// 关闭一个链接
 func RedisConnClose(trace *TraceContext, conn redis.Conn) {
 	startExecTime := time.Now()
 	if err := conn.Close(); err != nil {
@@ -116,7 +116,7 @@ func RedisLogDo(trace *TraceContext, c redis.Conn, commandName string, args ...i
 	return reply, err
 }
 
-//通过配置 执行redis
+// 通过配置 执行redis
 func RedisConfDo(trace *TraceContext, name string, commandName string, args ...interface{}) (interface{}, error) {
 	c, err := RedisConnFactory(name)
 	if err != nil {

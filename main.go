@@ -13,5 +13,6 @@ func main() {
 	defer lib.Destroy()
 
 	lib.Log.TagInfo(lib.NewTrace(), lib.DLTagUndefind, map[string]interface{}{"message": "todo sth"})
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 30)
+	lib.Log.TagInfo(lib.NewTrace(), lib.DLTagUndefind, map[string]interface{}{"message": "todo sth"})
 }
